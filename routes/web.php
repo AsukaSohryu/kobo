@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,3 +17,21 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [HomeController::class, 'index'])->name('homepage');
+
+
+Route::post('/handle-form-submission', [HomeController::class, 'handleFormSubmission']);
+
+Route::group(['middleware' => 'guest'], function() {
+
+    Route::get('/login', [AuthController::class, 'login'])->name('login');
+    Route::post('/login-post', [AuthController::class,'loginPost'])->name('login.post');
+});
+
+Route::group(['middleware' => 'auth'], function() {
+
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::post('/message-post', [DashboardController::class, 'create'])->name('message.post');
+
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+});
